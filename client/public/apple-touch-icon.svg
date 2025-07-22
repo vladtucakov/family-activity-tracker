@@ -1,0 +1,36 @@
+<svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background with iOS style rounded corners -->
+  <rect width="180" height="180" rx="40" fill="url(#gradient)" />
+  
+  <!-- Central checkmark design optimized for small size -->
+  <circle cx="90" cy="90" r="35" fill="white" opacity="0.2" />
+  
+  <!-- Simple but bold checkmark -->
+  <path d="M70 88 L82 100 L110 72" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.95" />
+  
+  <!-- Minimal activity indicators - just dots for clarity at small size -->
+  <g opacity="0.7">
+    <!-- Top -->
+    <circle cx="90" cy="35" r="4" fill="white" />
+    
+    <!-- Right -->
+    <circle cx="145" cy="90" r="4" fill="white" />
+    
+    <!-- Bottom -->
+    <circle cx="90" cy="145" r="4" fill="white" />
+    
+    <!-- Left -->
+    <circle cx="35" cy="90" r="4" fill="white" />
+  </g>
+  
+  <!-- Subtle progress ring -->
+  <circle cx="90" cy="90" r="50" stroke="white" stroke-width="2" fill="none" opacity="0.3" stroke-dasharray="8 4" />
+  
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4f46e5;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#7c3aed;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ec4899;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>

@@ -1,0 +1,66 @@
+<svg width="192" height="192" viewBox="0 0 192 192" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background with modern gradient -->
+  <rect width="192" height="192" rx="42" fill="url(#gradient)" />
+  
+  <!-- Central checkmark circle representing completion -->
+  <circle cx="96" cy="96" r="45" fill="white" opacity="0.15" />
+  <circle cx="96" cy="96" r="35" fill="white" opacity="0.25" />
+  
+  <!-- Large checkmark in center -->
+  <path d="M75 95 L88 108 L117 79" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.9" />
+  
+  <!-- Activity category icons around the edge -->
+  <g opacity="0.8">
+    <!-- Household (top) - house icon -->
+    <g transform="translate(96, 35)">
+      <path d="M-8,2 L0,-6 L8,2 L8,10 L-8,10 Z" fill="white" />
+      <rect x="-2" y="6" width="4" height="4" fill="#667eea" />
+    </g>
+    
+    <!-- Health (top-right) - heart icon -->
+    <g transform="translate(145, 60)">
+      <path d="M-4,-2 C-4,-4 -2,-4 0,-2 C2,-4 4,-4 4,-2 C4,1 0,5 0,5 C0,5 -4,1 -4,-2 Z" fill="white" />
+    </g>
+    
+    <!-- Creative (right) - brush icon -->
+    <g transform="translate(157, 96)">
+      <path d="M-6,-6 L6,6 M-4,-6 L6,4 M-6,-4 L4,6" stroke="white" stroke-width="2" stroke-linecap="round" />
+      <circle cx="4" cy="4" r="2" fill="white" />
+    </g>
+    
+    <!-- Learning (bottom-right) - book icon -->
+    <g transform="translate(145, 132)">
+      <rect x="-5" y="-3" width="10" height="6" rx="1" fill="white" />
+      <line x1="-3" y1="-1" x2="3" y2="-1" stroke="#667eea" stroke-width="1" />
+      <line x1="-3" y1="1" x2="3" y2="1" stroke="#667eea" stroke-width="1" />
+    </g>
+    
+    <!-- Helping (bottom) - hands icon -->
+    <g transform="translate(96, 157)">
+      <path d="M-6,2 C-6,0 -4,0 -4,2 L-4,4 C-4,6 -2,6 0,6 C2,6 4,6 4,4 L4,2 C4,0 6,0 6,2 L6,6 L-6,6 Z" fill="white" />
+    </g>
+    
+    <!-- Play (left) - game controller icon -->
+    <g transform="translate(35, 96)">
+      <rect x="-6" y="-3" width="12" height="6" rx="3" fill="white" />
+      <circle cx="-3" cy="0" r="1" fill="#667eea" />
+      <circle cx="3" cy="0" r="1" fill="#667eea" />
+    </g>
+  </g>
+  
+  <!-- Four small dots representing family members -->
+  <g opacity="0.6">
+    <circle cx="96" cy="25" r="3" fill="white" />
+    <circle cx="167" cy="96" r="3" fill="white" />
+    <circle cx="96" cy="167" r="3" fill="white" />
+    <circle cx="25" cy="96" r="3" fill="white" />
+  </g>
+  
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4f46e5;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#7c3aed;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ec4899;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>
