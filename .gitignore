@@ -49,7 +49,6 @@ android/app/build/
 android/build/
 android/.gradle/
 android/local.properties
-android/gradle.properties
 android/.idea/
 
 # Capacitor
