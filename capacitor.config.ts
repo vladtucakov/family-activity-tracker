@@ -6,8 +6,8 @@ const config: CapacitorConfig = {
   webDir: 'dist/public',
   server: {
     androidScheme: 'https',
-    // For production, point to your Replit server
-    url: process.env.NODE_ENV === 'production' ? undefined : 'https://family-activity-tracker--vladtucakov.replit.app',
+    // Always point to your Replit server for Android builds
+    url: 'https://family-activity-tracker--vladtucakov.replit.app',
     cleartext: true
   },
   plugins: {
