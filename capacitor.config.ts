@@ -5,7 +5,10 @@ const config: CapacitorConfig = {
   appName: 'Family Activity Tracker',
   webDir: 'dist/public',
   server: {
-    androidScheme: 'https'
+    androidScheme: 'https',
+    // For production, point to your Replit server
+    url: process.env.NODE_ENV === 'production' ? undefined : 'https://family-activity-tracker--vladtucakov.replit.app',
+    cleartext: true
   },
   plugins: {
     LocalNotifications: {
