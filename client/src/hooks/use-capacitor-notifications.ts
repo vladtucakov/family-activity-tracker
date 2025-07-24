@@ -1,5 +1,11 @@
 import { useEffect, useState } from 'react';
-import { notificationService } from '../../../src/capacitor';
+
+// Mock notification service for web mode
+const mockNotificationService = {
+  requestPermissions: async () => ({ display: 'denied' as const }),
+  scheduleDaily: async (options: any) => {},
+  showNotification: async (options: any) => {}
+};
 
 export function useCapacitorNotifications() {
   const [isNative, setIsNative] = useState(false);
@@ -16,9 +22,12 @@ export function useCapacitorNotifications() {
     
     if (checkNative()) {
       // Request notification permissions for native app
-      notificationService.requestPermissions().then(result => {
+      mockNotificationService.requestPermissions().then(result => {
         setPermissionGranted(result.display === 'granted');
       });
+    } else {
+      // Web mode - set permission to null
+      setPermissionGranted(null);
     }
   }, []);
 
@@ -32,7 +41,7 @@ export function useCapacitorNotifications() {
     if (!isNative) return false;
     
     try {
-      await notificationService.scheduleDaily(options);
+      await mockNotificationService.scheduleDaily(options);
       return true;
     } catch (error) {
       console.error('Failed to schedule notification:', error);
@@ -48,7 +57,7 @@ export function useCapacitorNotifications() {
     if (!isNative) return false;
     
     try {
-      await notificationService.showNotification(options);
+      await mockNotificationService.showNotification(options);
       return true;
     } catch (error) {
       console.error('Failed to show notification:', error);
