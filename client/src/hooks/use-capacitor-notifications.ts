@@ -47,7 +47,10 @@ export function useCapacitorNotifications() {
         // Request notification permissions for native app
         try {
           const result = await capacitorNotificationService.requestPermissions();
-          setPermissionGranted(result.display === 'granted');
+          console.log('Notification permission result:', result);
+          // Check both display and alert permissions for better compatibility
+          const isGranted = result.display === 'granted' || result.alert === 'granted';
+          setPermissionGranted(isGranted);
         } catch (error) {
           console.error('Failed to request permissions:', error);
           setPermissionGranted(false);
@@ -110,10 +113,27 @@ export function useCapacitorNotifications() {
     }
   };
 
+  const recheckPermissions = async () => {
+    if (!isNative || !capacitorNotificationService) return false;
+    
+    try {
+      const result = await capacitorNotificationService.requestPermissions();
+      console.log('Recheck permission result:', result);
+      const isGranted = result.display === 'granted' || result.alert === 'granted';
+      setPermissionGranted(isGranted);
+      return isGranted;
+    } catch (error) {
+      console.error('Failed to recheck permissions:', error);
+      setPermissionGranted(false);
+      return false;
+    }
+  };
+
   return {
     isNative,
     permissionGranted,
     scheduleReminder,
-    showNotification
+    showNotification,
+    recheckPermissions
   };
 }

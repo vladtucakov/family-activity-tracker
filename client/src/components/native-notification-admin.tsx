@@ -10,11 +10,22 @@ export default function NativeNotificationAdmin() {
     isNative, 
     permissionGranted, 
     scheduleReminder, 
-    showNotification 
+    showNotification,
+    recheckPermissions
   } = useCapacitorNotifications();
   
   const [testResult, setTestResult] = useState<string | null>(null);
   const [isScheduled, setIsScheduled] = useState(false);
+
+  const handleRecheckPermissions = async () => {
+    setTestResult(null);
+    const granted = await recheckPermissions();
+    if (granted) {
+      setTestResult('Permissions granted! Notifications are now enabled.');
+    } else {
+      setTestResult('Permissions still denied. Please check Android settings.');
+    }
+  };
 
   const handleTestNotification = async () => {
     setTestResult(null);
@@ -104,6 +115,23 @@ export default function NativeNotificationAdmin() {
             )}
           </Badge>
         </div>
+
+        {/* Permission Recheck Button */}
+        {!permissionGranted && (
+          <div className="space-y-2">
+            <Button 
+              onClick={handleRecheckPermissions}
+              className="w-full"
+              variant="secondary"
+            >
+              <CheckCircle className="h-4 w-4 mr-2" />
+              Recheck Permissions
+            </Button>
+            <p className="text-xs text-gray-600 text-center">
+              If you enabled notifications in Android settings, click to refresh
+            </p>
+          </div>
+        )}
 
         {/* Test Notification */}
         <div className="space-y-2">
