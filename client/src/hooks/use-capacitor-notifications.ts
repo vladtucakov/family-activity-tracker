@@ -13,8 +13,7 @@ const initializeCapacitor = async () => {
       LocalNotifications = LN;
       capacitorNotificationService = {
         requestPermissions: async () => await LN.requestPermissions(),
-        scheduleDaily: async (options: any) => await LN.schedule({ notifications: [options] }),
-        showNotification: async (options: any) => await LN.schedule({ notifications: [options] })
+        scheduleDaily: async (options: any) => await LN.schedule({ notifications: [options] })
       };
     }
   } catch (error) {
@@ -99,13 +98,25 @@ export function useCapacitorNotifications() {
     if (!isNative || !capacitorNotificationService) return false;
     
     try {
-      await capacitorNotificationService.showNotification({
-        id: options.id || Date.now(),
-        title: options.title,
-        body: options.body,
-        schedule: { at: new Date() },
-        sound: 'default'
+      console.log('Attempting to show notification:', options);
+      // For immediate notifications, schedule them 1 second from now
+      const scheduleTime = new Date();
+      scheduleTime.setSeconds(scheduleTime.getSeconds() + 1);
+      
+      await LocalNotifications.schedule({
+        notifications: [{
+          id: options.id || Date.now(),
+          title: options.title,
+          body: options.body,
+          schedule: { at: scheduleTime },
+          sound: 'default',
+          attachments: [],
+          actionTypeId: "",
+          extra: {}
+        }]
       });
+      
+      console.log('Notification scheduled successfully');
       return true;
     } catch (error) {
       console.error('Failed to show notification:', error);
