@@ -6,7 +6,8 @@ const config: CapacitorConfig = {
   webDir: 'dist/public',
   server: {
     androidScheme: 'https',
-    // Always point to your Replit server for Android builds
+    iosScheme: 'https',
+    // Always point to your Replit server for mobile builds
     url: 'https://tucakov-family-track-pro.replit.app',
     cleartext: true
   },
