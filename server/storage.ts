@@ -1,4 +1,6 @@
-import { type User, type InsertUser, type Activity, type InsertActivity, type Badge, type InsertBadge, type Streak, type InsertStreak, FAMILY_MEMBERS } from "@shared/schema";
+import { type User, type InsertUser, type Activity, type InsertActivity, type Badge, type InsertBadge, type Streak, type InsertStreak, FAMILY_MEMBERS, users, activities, badges, streaks } from "@shared/schema";
+import { db } from "./db";
+import { eq, and, gte, lte } from "drizzle-orm";
 
 export interface IStorage {
   // Users
@@ -101,6 +103,7 @@ class MemStorage implements IStorage {
   async createActivity(insertActivity: InsertActivity): Promise<Activity> {
     const activity: Activity = {
       id: this.nextActivityId++,
+      createdAt: new Date(),
       ...insertActivity
     };
     this.activities.push(activity);
@@ -130,6 +133,7 @@ class MemStorage implements IStorage {
   async createBadge(insertBadge: InsertBadge): Promise<Badge> {
     const badge: Badge = {
       id: this.nextBadgeId++,
+      earnedAt: new Date(),
       ...insertBadge
     };
     this.badges.push(badge);
@@ -161,4 +165,101 @@ class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Database storage implementation
+
+class DatabaseStorage implements IStorage {
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const [user] = await db.insert(users).values(insertUser).returning();
+    return user;
+  }
+
+  async getAllUsers(): Promise<User[]> {
+    return await db.select().from(users);
+  }
+
+  async getActivitiesByUser(userId: number): Promise<Activity[]> {
+    return await db.select().from(activities).where(eq(activities.userId, userId));
+  }
+
+  async getActivitiesByUserAndDate(userId: number, date: string): Promise<Activity[]> {
+    return await db.select().from(activities).where(
+      and(eq(activities.userId, userId), eq(activities.date, date))
+    );
+  }
+
+  async getActivitiesByUserAndDateRange(userId: number, startDate: string, endDate: string): Promise<Activity[]> {
+    return await db.select().from(activities).where(
+      and(
+        eq(activities.userId, userId),
+        gte(activities.date, startDate),
+        lte(activities.date, endDate)
+      )
+    );
+  }
+
+  async createActivity(activity: InsertActivity): Promise<Activity> {
+    const [newActivity] = await db.insert(activities).values(activity).returning();
+    return newActivity;
+  }
+
+  async updateActivity(id: number, activity: Partial<InsertActivity>): Promise<Activity | undefined> {
+    const [updatedActivity] = await db.update(activities)
+      .set(activity)
+      .where(eq(activities.id, id))
+      .returning();
+    return updatedActivity || undefined;
+  }
+
+  async deleteActivity(id: number): Promise<boolean> {
+    const result = await db.delete(activities).where(eq(activities.id, id));
+    return (result.rowCount || 0) > 0;
+  }
+
+  async getBadgesByUser(userId: number): Promise<Badge[]> {
+    return await db.select().from(badges).where(eq(badges.userId, userId));
+  }
+
+  async createBadge(badge: InsertBadge): Promise<Badge> {
+    const [newBadge] = await db.insert(badges).values(badge).returning();
+    return newBadge;
+  }
+
+  async getStreakByUser(userId: number): Promise<Streak | undefined> {
+    const [streak] = await db.select().from(streaks).where(eq(streaks.userId, userId));
+    return streak || undefined;
+  }
+
+  async updateStreak(userId: number, streakData: Partial<InsertStreak>): Promise<Streak> {
+    const existingStreak = await this.getStreakByUser(userId);
+    
+    if (existingStreak) {
+      const [updatedStreak] = await db.update(streaks)
+        .set(streakData)
+        .where(eq(streaks.userId, userId))
+        .returning();
+      return updatedStreak;
+    } else {
+      const newStreak: InsertStreak = {
+        userId,
+        currentStreak: 0,
+        longestStreak: 0,
+        lastActivityDate: null,
+        ...streakData
+      };
+      const [createdStreak] = await db.insert(streaks).values(newStreak).returning();
+      return createdStreak;
+    }
+  }
+}
+
+export const storage = new DatabaseStorage();
