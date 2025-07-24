@@ -7,7 +7,7 @@ const config: CapacitorConfig = {
   server: {
     androidScheme: 'https',
     // Always point to your Replit server for Android builds
-    url: 'https://family-activity-tracker--vladtucakov.replit.app',
+    url: 'https://tucakov-family-track-pro.replit.app',
     cleartext: true
   },
   plugins: {
