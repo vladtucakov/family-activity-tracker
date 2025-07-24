@@ -6,6 +6,15 @@ import { z } from "zod";
 import { NotificationService } from "./notification-service";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Debug endpoint to test connectivity
+  app.get("/api/debug", async (req, res) => {
+    res.json({ 
+      message: "Family Activity Tracker API is working!",
+      timestamp: new Date().toISOString(),
+      server: "Replit"
+    });
+  });
+
   // Get all family members
   app.get("/api/users", async (req, res) => {
     try {
