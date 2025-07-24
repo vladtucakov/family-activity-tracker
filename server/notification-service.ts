@@ -95,7 +95,7 @@ export class NotificationService {
       for (const user of users) {
         try {
           // Get today's activities for this user
-          const activities = await storage.getUserActivities(user.id, today, today);
+          const activities = await storage.getActivitiesByUserAndDate(user.id, today);
           const activitiesCompleted = activities.length;
           
           console.log(`[NotificationService] ${user.username}: ${activitiesCompleted} activities completed`);
