@@ -12,8 +12,14 @@ const config: CapacitorConfig = {
   },
   plugins: {
     LocalNotifications: {
-      smallIcon: "ic_stat_icon_config_sample",
-      iconColor: "#2563EB"
+      smallIcon: "ic_stat_family_tracker",
+      iconColor: "#2563EB",
+      sound: "default"
+    },
+    SplashScreen: {
+      launchShowDuration: 2000,
+      backgroundColor: "#2563EB",
+      showSpinner: false
     }
   }
 };
