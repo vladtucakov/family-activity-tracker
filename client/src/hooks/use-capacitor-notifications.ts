@@ -1,5 +1,27 @@
 import { useEffect, useState } from 'react';
 
+// Import Capacitor notifications for native mode
+let LocalNotifications: any = null;
+let capacitorNotificationService: any = null;
+
+// Initialize Capacitor notifications in native context
+const initializeCapacitor = async () => {
+  try {
+    // @ts-ignore - Capacitor global available in native context
+    if (typeof window !== 'undefined' && window.Capacitor?.isNativePlatform?.()) {
+      const { LocalNotifications: LN } = await import('@capacitor/local-notifications');
+      LocalNotifications = LN;
+      capacitorNotificationService = {
+        requestPermissions: async () => await LN.requestPermissions(),
+        scheduleDaily: async (options: any) => await LN.schedule({ notifications: [options] }),
+        showNotification: async (options: any) => await LN.schedule({ notifications: [options] })
+      };
+    }
+  } catch (error) {
+    console.log('Capacitor not available, using web mode');
+  }
+};
+
 // Mock notification service for web mode
 const mockNotificationService = {
   requestPermissions: async () => ({ display: 'denied' as const }),
@@ -12,23 +34,31 @@ export function useCapacitorNotifications() {
   const [permissionGranted, setPermissionGranted] = useState<boolean | null>(null);
 
   useEffect(() => {
-    // Check if running in Capacitor (native app)
-    const checkNative = () => {
+    const setupNotifications = async () => {
+      // Initialize Capacitor if available
+      await initializeCapacitor();
+      
+      // Check if running in Capacitor (native app)
       // @ts-ignore - Capacitor global available in native context
-      return typeof window !== 'undefined' && window.Capacitor?.isNativePlatform?.();
+      const isNativeMode = typeof window !== 'undefined' && window.Capacitor?.isNativePlatform?.();
+      setIsNative(isNativeMode);
+      
+      if (isNativeMode && capacitorNotificationService) {
+        // Request notification permissions for native app
+        try {
+          const result = await capacitorNotificationService.requestPermissions();
+          setPermissionGranted(result.display === 'granted');
+        } catch (error) {
+          console.error('Failed to request permissions:', error);
+          setPermissionGranted(false);
+        }
+      } else {
+        // Web mode - set permission to null
+        setPermissionGranted(null);
+      }
     };
     
-    setIsNative(checkNative());
-    
-    if (checkNative()) {
-      // Request notification permissions for native app
-      mockNotificationService.requestPermissions().then(result => {
-        setPermissionGranted(result.display === 'granted');
-      });
-    } else {
-      // Web mode - set permission to null
-      setPermissionGranted(null);
-    }
+    setupNotifications();
   }, []);
 
   const scheduleReminder = async (options: {
@@ -38,10 +68,19 @@ export function useCapacitorNotifications() {
     hour: number;
     minute: number;
   }) => {
-    if (!isNative) return false;
+    if (!isNative || !capacitorNotificationService) return false;
     
     try {
-      await mockNotificationService.scheduleDaily(options);
+      const scheduleTime = new Date();
+      scheduleTime.setHours(options.hour, options.minute, 0, 0);
+      
+      await capacitorNotificationService.scheduleDaily({
+        id: options.id,
+        title: options.title,
+        body: options.body,
+        schedule: { at: scheduleTime, repeats: true },
+        sound: 'default'
+      });
       return true;
     } catch (error) {
       console.error('Failed to schedule notification:', error);
@@ -54,10 +93,16 @@ export function useCapacitorNotifications() {
     body: string;
     id?: number;
   }) => {
-    if (!isNative) return false;
+    if (!isNative || !capacitorNotificationService) return false;
     
     try {
-      await mockNotificationService.showNotification(options);
+      await capacitorNotificationService.showNotification({
+        id: options.id || Date.now(),
+        title: options.title,
+        body: options.body,
+        schedule: { at: new Date() },
+        sound: 'default'
+      });
       return true;
     } catch (error) {
       console.error('Failed to show notification:', error);
