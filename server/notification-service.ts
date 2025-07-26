@@ -51,7 +51,7 @@ export class NotificationService {
   }
 
   /**
-   * Schedule daily notifications - TESTING: Set for 7:45 PM Pacific Today for Vlad only
+   * Schedule daily notifications for 8:00 PM Pacific Time
    */
   scheduleDailyNotifications() {
     // Clear any existing scheduled job
@@ -60,18 +60,26 @@ export class NotificationService {
       clearTimeout(existingJob);
     }
 
-    // TESTING: Schedule for 2 minutes from now for immediate testing
+    // Calculate next 8:00 PM Pacific Time
     const now = new Date();
+    const pacificNow = new Date(now.toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
     
-    // Get current time and add 2 minutes
-    const targetTime = new Date(now.getTime() + (2 * 60 * 1000)); // 2 minutes from now
+    // Create target time: today at 8:00 PM Pacific
+    const targetTime = new Date(pacificNow);
+    targetTime.setHours(20, 0, 0, 0); // 8:00 PM
     
-    const timeUntilTarget = targetTime.getTime() - now.getTime();
+    // If it's already past 8 PM today, schedule for 8 PM tomorrow
+    if (targetTime <= pacificNow) {
+      targetTime.setDate(targetTime.getDate() + 1);
+    }
+    
+    // Convert back to UTC for setTimeout
+    const targetUTC = new Date(targetTime.toLocaleString("en-US", {timeZone: "UTC"}));
+    const timeUntilTarget = targetUTC.getTime() - now.getTime();
     
     console.log(`[NotificationService] Current time: ${now.toISOString()}`);
-    console.log(`[NotificationService] Current Pacific time: ${new Date(now.toLocaleString("en-US", {timeZone: "America/Los_Angeles"})).toLocaleString()}`);
-    
-    console.log(`[NotificationService] TESTING: Scheduling notification for ${targetTime.toISOString()} (${Math.round(timeUntilTarget / 1000)} seconds from now)`);
+    console.log(`[NotificationService] Current Pacific time: ${pacificNow.toLocaleString()}`);
+    console.log(`[NotificationService] Next 8 PM Pacific notification: ${targetTime.toLocaleString()} (${Math.round(timeUntilTarget / (1000 * 60 * 60))} hours from now)`);
 
     const timeoutId = setTimeout(async () => {
       await this.sendDailyReminders();
@@ -100,12 +108,12 @@ export class NotificationService {
           
           console.log(`[NotificationService] ${user.username}: ${activitiesCompleted} activities completed`);
           
-          // TESTING: Send notification only to Vlad (username: 'vlad') regardless of activity count
-          if (user.username === 'vlad') {
-            console.log(`[NotificationService] TESTING: Sending notification to Vlad (${activitiesCompleted} activities)`);
+          // Send reminder if user has fewer than 3 activities
+          if (activitiesCompleted < 3) {
+            console.log(`[NotificationService] Sending reminder to ${user.username} (${activitiesCompleted}/3 activities)`);
             await this.sendReminderNotification(user, activitiesCompleted);
           } else {
-            console.log(`[NotificationService] TESTING: Skipping ${user.username} (only testing Vlad)`);
+            console.log(`[NotificationService] ${user.username} has completed 3+ activities, no reminder needed`);
           }
         } catch (error) {
           console.error(`[NotificationService] Error checking activities for ${user.username}:`, error);

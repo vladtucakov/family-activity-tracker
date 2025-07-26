@@ -56,7 +56,7 @@ export default function NativeNotificationAdmin() {
     });
     
     if (success) {
-      setTestResult('Daily reminder scheduled for 8:00 PM!');
+      setTestResult('✓ Daily Android notifications scheduled for 8:00 PM Pacific! The server also sends notifications at 8 PM Pacific for family members with fewer than 3 activities.');
       setIsScheduled(true);
     } else {
       setTestResult('Failed to schedule reminder');
